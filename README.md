@@ -1,5 +1,7 @@
 # PebbleSepta
-Septa App for Pebble
+*Septa App* for Pebble
+
+Copyright &copy; John L. Swartzentruber. All rights reserved.
 
 This is in the very early stages of development. The goal for the final product is as follows:
 
