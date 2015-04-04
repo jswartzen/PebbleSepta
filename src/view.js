@@ -52,45 +52,50 @@ var trainsRect = new UI.Rect({
   backgroundColor: 'white'
 });
 
-var train1 = new UI.Text({
+var trains = [];
+trains.push(new UI.Text({
     position: new Vector2(2, 50),
     size: new Vector2(142, 35),
     font: 'Gothic-28-bold',
     color: 'black',
     textAlign: 'left'
-});
+}));
 
-var train2 = new UI.Text({
+trains.push(new UI.Text({
     position: new Vector2(2, 85),
     size: new Vector2(142, 35),
     font: 'Gothic-28',
     color: 'black',
     textAlign: 'left'
-});
+}));
 
-var train3 = new UI.Text({
+trains.push(new UI.Text({
     position: new Vector2(2, 120),
     size: new Vector2(142, 35),
     font: 'Gothic-28',
     color: 'black',
     textAlign: 'left'
-    
-});
+}));
 
 // Show the Window
 window.add(timeText);
 window.add(stationRect);
 window.add(stationText);
 window.add(trainsRect);
-window.add(train1);
-window.add(train2);
-window.add(train3);
 
-module.exports.show = function() {
-  window.show();  
+trains.forEach(function(element) {
+    window.add(element);
+});
+
+module.exports.window = window;
+
+module.exports.setStationText = function (station) {
+    stationText.text(station);
 };
 
-module.exports.stationText = stationText;
-module.exports.train1 = train1;
-module.exports.train2 = train2;
-module.exports.train3 = train3;
+module.exports.setTrains = function(schedule) {
+    var len = schedule.length;
+    trains.forEach(function(train, index) {
+        train.text(index < len ? schedule[index] : '');
+    });
+};

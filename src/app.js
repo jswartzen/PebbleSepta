@@ -1,20 +1,33 @@
-var Layout = require('layout');
+var View = require('view');
+
+// This data will come from the configuration
+var config = {
+    home: 'Swarthmore',
+    work: 'Suburban'
+};
 
 // Set up the model/viewmodel
 var model = {
-    home: 'Swarthmore',
-    dest: 'Suburban',
-    currentStation: 'Swarthmore',
+    startStation: 'Swarthmore',
+    destStation: 'Suburban',
     trains: ['82:34 (On time)', '81:23 (1)', '82:34 (12)']
 };
 
-Layout.show();
+View.window.show();
 
 function refresh() {
-    Layout.stationText.text(model.currentStation);
-    Layout.train1.text(model.trains[0]);
-    Layout.train2.text(model.trains[1]);
-    Layout.train3.text(model.trains[2]);
+    View.setStationText(model.startStation);
+    View.setTrains(model.trains);
 }
 
 refresh();
+
+function swap() {
+    var s = model.startStation;
+    model.startStation = model.destStation;
+    model.destStation = s;
+    refresh();
+}
+
+View.window.on('click', 'up', swap);
+View.window.on('click', 'down', swap);
