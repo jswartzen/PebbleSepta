@@ -1,7 +1,8 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "location",
+        "configurable"
     ],
     "companyName": "john@swartzentruber.us",
     "longName": "Septa App",
