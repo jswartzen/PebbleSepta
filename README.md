@@ -1,5 +1,5 @@
 # PebbleSepta
-*Septa App* for Pebble
+## *Septa App* for Pebble
 
 Copyright &copy; John L. Swartzentruber. All rights reserved.
 
