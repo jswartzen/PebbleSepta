@@ -10,7 +10,7 @@ var window = new UI.Window();
 var timeText = new UI.TimeText({
   position: new Vector2(0, 0),
   size: new Vector2(144, 22),
-  text: "%H:%M",
+  text: "%I:%M",
   font: 'Gothic-18-Bold',
   color: 'white',
   textAlign: 'center'
@@ -31,7 +31,8 @@ var stationText = new UI.Text({
   size: new Vector2(144, 24),
   font: 'Gothic-24-bold',
   color: 'black',
-  textAlign: 'center'
+  textAlign: 'center',
+  textOverflow: 'fill'
 });
 
 // Create TimeText
@@ -56,7 +57,7 @@ var trains = [];
 trains.push(new UI.Text({
     position: new Vector2(2, 50),
     size: new Vector2(142, 35),
-    font: 'Gothic-28-bold',
+    font: 'Gothic-28-Bold',
     color: 'black',
     textAlign: 'left'
 }));
