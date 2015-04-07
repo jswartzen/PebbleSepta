@@ -1,4 +1,7 @@
-module.export.stations = [
+/**
+ * This list is taken from the Baldwin App on GitHub
+*/
+var stations = [
     { name: '30th Street Station', lat: 39.95659111, lng: -75.18178675 },
     { name: '49th St', lat: 39.94361687, lng: -75.21649208 },
     { name: 'Airport Terminal A', lat: 39.8759939, lng: -75.24673065 },
@@ -154,3 +157,19 @@ module.export.stations = [
     { name: 'Wynnewood', lat: 40.00273604, lng: -75.27310116 },
     { name: 'Yardley', lat: 40.23510917, lng: -74.83097682 }
 ];
+
+module.exports.closestStation = function (lat, lng) {
+    var min = Infinity;
+    var station = stations.reduce(function (previous, current) {
+        var latDif = lat - current.lat;
+        var lngDif = lng - current.lng;
+        var distance = latDif * latDif + lngDif * lngDif;
+        if (distance < min) {
+            min = distance;
+            return current;
+        }
+        return previous;
+    }, null);
+    
+    return station.name ? station.name : '';
+};

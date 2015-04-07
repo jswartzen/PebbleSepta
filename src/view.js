@@ -27,22 +27,23 @@ var stationRect = new UI.Rect({
 
 // Create the Station Text
 var stationText = new UI.Text({
-  position: new Vector2(0, -4),
-  size: new Vector2(144, 24),
-  font: 'Gothic-24-bold',
-  color: 'black',
-  textAlign: 'center',
-  textOverflow: 'fill'
+    position: new Vector2(0, -4),
+    size: new Vector2(144, 24),
+    font: 'Gothic-24-bold',
+    color: 'black',
+    text: '',
+    textAlign: 'center',
+    textOverflow: 'fill'
 });
 
 // Create TimeText
 var timeText = new UI.TimeText({
-  position: new Vector2(0, 20),
-  size: new Vector2(144, 22),
-  text: "%H:%M",
-  font: 'Gothic-24-Bold',
-  color: 'white',
-  textAlign: 'center'
+    position: new Vector2(0, 20),
+    size: new Vector2(144, 22),
+    text: "%H:%M",
+    font: 'Gothic-24-Bold',
+    color: 'white',
+    textAlign: 'center'
 });
 
 
@@ -59,6 +60,7 @@ trains.push(new UI.Text({
     size: new Vector2(142, 35),
     font: 'Gothic-28-Bold',
     color: 'black',
+    text: '',
     textAlign: 'left'
 }));
 
@@ -67,6 +69,7 @@ trains.push(new UI.Text({
     size: new Vector2(142, 35),
     font: 'Gothic-28',
     color: 'black',
+    text: '',
     textAlign: 'left'
 }));
 
@@ -75,6 +78,7 @@ trains.push(new UI.Text({
     size: new Vector2(142, 35),
     font: 'Gothic-28',
     color: 'black',
+    text: '',
     textAlign: 'left'
 }));
 
