@@ -1,16 +1,16 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "location",
+        "configurable"
     ],
     "companyName": "john@swartzentruber.us",
-    "longName": "Septa App",
+    "longName": "SEPTA Rail Commuter",
     "projectType": "pebblejs",
     "resources": {
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "png"
             },
@@ -28,6 +28,12 @@
                 "file": "fonts/UbuntuMono-Regular.ttf",
                 "name": "MONO_FONT_14",
                 "type": "font"
+            },
+            {
+                "file": "images/train-icon.png",
+                "menuIcon": true,
+                "name": "IMAGES_TRAIN_ICON_PNG",
+                "type": "png"
             }
         ]
     },

@@ -1,110 +1,117 @@
-var UI = require('ui');
-var Vector2 = require('vector2');
+var View = require('view');
+var ajax = require('ajax');
+var stations = require('stations');
+var Config = require('Config');
+
+// This data will come from the configuration
+var config = {
+    home: 'Swarthmore',
+    work: 'Suburban Station'
+};
 
 // Set up the model/viewmodel
 var model = {
-    home: 'Swarthmore',
-    dest: 'Suburban',
-    currentStation: 'Swarthmore',
-    trains: ['82:34 (On time)', '81:23 (1)', '82:34 (12)']
+    startStation: '',
+    destStation: '',
+    trains: []
 };
 
-// Create the Window
-var window = new UI.Window();
-
-// 144x168
-
-// Create TimeText
-var timeText = new UI.TimeText({
-  position: new Vector2(0, 0),
-  size: new Vector2(144, 22),
-  text: "%H:%M",
-  font: 'Gothic-18-Bold',
-  color: 'white',
-  textAlign: 'center'
-});
-
-// Add the TimeText
-window.add(timeText);
-
-// Create a background Rect
-var stationRect = new UI.Rect({
-  position: new Vector2(0, 0),
-  size: new Vector2(144, 24),
-  backgroundColor: 'white'
-});
-
-// Add Rect to Window
-window.add(stationRect);
-
-// Create the Station Text
-var stationText = new UI.Text({
-  position: new Vector2(0, -4),
-  size: new Vector2(144, 24),
-  font: 'Gothic-24-bold',
-  color: 'black',
-  textAlign: 'center'
-});
-
-window.add(stationText);
-
-// Create TimeText
-var timeText = new UI.TimeText({
-  position: new Vector2(0, 20),
-  size: new Vector2(144, 22),
-  text: "%H:%M",
-  font: 'Gothic-24-Bold',
-  color: 'white',
-  textAlign: 'center'
-});
-
-// Add the TimeText
-window.add(timeText);
-
-// Create a background Rect
-var trainsRect = new UI.Rect({
-  position: new Vector2(0, 50),
-  size: new Vector2(144, 122),
-  backgroundColor: 'white'
-});
-window.add(trainsRect);
-
-var train1 = new UI.Text({
-    position: new Vector2(2, 50),
-    size: new Vector2(142, 35),
-    font: 'Gothic-28-bold',
-    color: 'black',
-    textAlign: 'left'
-});
-window.add(train1);
-
-var train2 = new UI.Text({
-    position: new Vector2(2, 85),
-    size: new Vector2(142, 35),
-    font: 'Gothic-28',
-    color: 'black',
-    textAlign: 'left'
-});
-window.add(train2);
-
-var train3 = new UI.Text({
-    position: new Vector2(2, 120),
-    size: new Vector2(142, 35),
-    font: 'Gothic-28',
-    color: 'black',
-    textAlign: 'left'
+function parseResult(train) {
+    var s = train.orig_departure_time;
+    if (train.orig_delay === 'On time') {
+        s += ' - OK';
+    } else {
+        var delay = parseInt(train.orig_delay);
+        if (isNaN(delay)) {
+            delay = 0;
+        }
+        s += ' (' + delay + ')';
+    }
     
-});
-window.add(train3);
-
-// Show the Window
-window.show();
-
-function updateTrainText() {
-    train1.text(model.trains[0]);
-    train2.text(model.trains[1]);
-    train3.text(model.trains[2]);
+    return s;
 }
 
-stationText.text(model.currentStation);
-updateTrainText();
+function getNextToArrive() {
+    var url = encodeURI('http://www3.septa.org/hackathon/NextToArrive/' + model.startStation + '/' + model.destStation + '/4');
+    
+    View.refreshView(model);
+    
+    try {
+        ajax({
+            url: url,
+            type: 'json'
+        }, 
+        function (data, status, request) {
+            model.trains = [];
+            data.forEach(function(train, index) {
+                var s = parseResult(train);
+                model.trains.push(s);
+            });
+            View.refreshView(model);
+        }, 
+        function(error, status, request) {
+            console.log('Ajax request failed: ' + error);
+        });
+    } catch (e) {
+        console.log('Caught exception in ajax call: ' + e.message);
+    }
+}
+
+function swapDest() {
+    if (model.destStation !== config.home && model.startStation !== config.home) {
+        model.destStation = config.home;
+    } else if (model.destStation !== config.work && model.startStation !== config.work) {
+        model.destStation = config.work;
+    } else {
+        var temp = model.destStation;
+        model.destStation = model.startStation;
+        model.startStation = temp;
+    }
+    
+    model.trains = [];
+    getNextToArrive();
+}
+
+function setStartStation(station) {
+    if (station && station !== model.startStation) {
+        model.trains = [];
+        model.startStation = station;
+        model.destStation = model.startStation === config.home ? config.work : config.home;
+    
+        getNextToArrive();
+    }
+}
+
+// Set the default stations before doing geolocation
+setStartStation(config.home);
+
+View.window.show();
+View.window.on('click', 'up', swapDest);
+View.window.on('click', 'down', swapDest);
+
+// Update every minute
+setInterval(function() { getNextToArrive(); }, 60000);
+
+// Geolocation processing
+(function () {
+    var watchId = navigator.geolocation.watchPosition(
+        function (pos) {
+            console.log('accuracy: ', pos.coords.accuracy, 'coords: ' + pos.coords.latitude + '/' + pos.coords.longitude);
+            var station = stations.closestStation(pos.coords.latitude, pos.coords.longitude);
+            setStartStation(station);
+            
+            if (station && pos.coords.accuracy <= 50) {
+                navigator.geolocation.clearWatch(watchId);
+            }
+        }, 
+        function (err) {
+            console.log('GPS error: ' + err.message + '(' + err.code + ')');
+        }, 
+        {
+            enableHighAccuracy: false,
+            maximumAge: 150000,
+            timeout: 15000
+        });
+})();
+
+Config.init();    // set up the config page handlers
