@@ -74,13 +74,11 @@ trains.forEach(function(element) {
 
 module.exports.window = window;
 
-module.exports.setStationText = function (station) {
-    stationText.text(station);
-};
-
-module.exports.setTrains = function(schedule) {
-    var len = schedule.length;
+module.exports.refreshView = function(model) {
+    stationText.text(model.startStation);
+    
+    var len = model.trains.length;
     trains.forEach(function(train, index) {
-        train.text(index < len ? schedule[index] : '');
+        train.text(index < len ? model.trains[index] : '');
     });
 };

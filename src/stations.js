@@ -158,18 +158,20 @@ var stations = [
     { name: 'Yardley', lat: 40.23510917, lng: -74.83097682 }
 ];
 
-module.exports.closestStation = function (lat, lng) {
-    var min = Infinity;
-    var station = stations.reduce(function (previous, current) {
-        var latDif = lat - current.lat;
-        var lngDif = lng - current.lng;
-        var distance = latDif * latDif + lngDif * lngDif;
-        if (distance < min) {
-            min = distance;
-            return current;
-        }
-        return previous;
-    }, null);
-    
-    return station.name ? station.name : '';
+this.export = {
+    closestStation: function (lat, lng) {
+        var min = Infinity;
+        var station = stations.reduce(function (previous, current) {
+            var latDif = lat - current.lat;
+            var lngDif = lng - current.lng;
+            var distance = latDif * latDif + lngDif * lngDif;
+            if (distance < min) {
+                min = distance;
+                return current;
+            }
+            return previous;
+        }, null);
+        
+        return station.name ? station.name : '';
+    }
 };

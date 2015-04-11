@@ -1,6 +1,7 @@
 var View = require('view');
 var ajax = require('ajax');
 var stations = require('stations');
+var Config = require('Config');
 
 // This data will come from the configuration
 var config = {
@@ -14,11 +15,6 @@ var model = {
     destStation: '',
     trains: []
 };
-
-function refreshView() {
-    View.setStationText(model.startStation);
-    View.setTrains(model.trains);
-}
 
 function parseResult(train) {
     var s = train.orig_departure_time;
@@ -38,22 +34,27 @@ function parseResult(train) {
 function getNextToArrive() {
     var url = encodeURI('http://www3.septa.org/hackathon/NextToArrive/' + model.startStation + '/' + model.destStation + '/4');
     
-    refreshView();
-    ajax({
-        url: url,
-        type: 'json'
-    }, 
-    function (data, status, request) {
-        model.trains = [];
-        data.forEach(function(train, index) {
-            var s = parseResult(train);
-            model.trains.push(s);
+    View.refreshView(model);
+    
+    try {
+        ajax({
+            url: url,
+            type: 'json'
+        }, 
+        function (data, status, request) {
+            model.trains = [];
+            data.forEach(function(train, index) {
+                var s = parseResult(train);
+                model.trains.push(s);
+            });
+            View.refreshView(model);
+        }, 
+        function(error, status, request) {
+            console.log('Ajax request failed: ' + error);
         });
-        refreshView();
-    }, 
-    function(error, status, request) {
-        console.log('Ajax request failed: ' + error);
-    });
+    } catch (e) {
+        console.log('Caught exception in ajax call: ' + e.message);
+    }
 }
 
 function swapDest() {
@@ -113,17 +114,4 @@ setInterval(function() { getNextToArrive(); }, 60000);
         });
 })();
 
-Pebble.addEventListener('showConfiguration', function() {
-    console.log('!!Settings requested!');
-    Pebble.openURL('http://pebble.johnswartzentruber.com/Septa.html');
-});
-    
-Pebble.addEventListener("webviewclosed", function(e) {
-    console.log("configuration closed");
-    
-    // webview closed
-    if (e.response) {
-        var options = JSON.parse(decodeURIComponent(e.response));
-        console.log("Options = " + JSON.stringify(options));
-    }
-}); 
+Config.init();    // set up the config page handlers
