@@ -158,7 +158,7 @@ var stations = [
     { name: 'Yardley', lat: 40.23510917, lng: -74.83097682 }
 ];
 
-this.export = {
+this.exports = {
     closestStation: function (lat, lng) {
         var min = Infinity;
         var station = stations.reduce(function (previous, current) {
@@ -172,6 +172,6 @@ this.export = {
             return previous;
         }, null);
         
-        return station.name ? station.name : '';
+        return station.name;
     }
 };
