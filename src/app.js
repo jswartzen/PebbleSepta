@@ -4,9 +4,7 @@ var stations = require('stations');
 var Config = require('Config');    // This is a constructor
 
 // This data will come from the configuration
-console.log('Creating Config() object');
 var config = new Config(configChanged);
-console.log('defaults: ', config.home, config.work, config.freq);
 
 // Set up the model/viewmodel
 var model = {
@@ -95,7 +93,6 @@ setInterval(function() { getNextToArrive(); }, config.freq * 60000);
 (function () {
     var watchId = navigator.geolocation.watchPosition(
         function (pos) {
-            console.log('accuracy: ', pos.coords.accuracy, 'coords: ' + pos.coords.latitude + '/' + pos.coords.longitude);
             var station = stations.closestStation(pos.coords.latitude, pos.coords.longitude);
             setStartStation(station);
             
