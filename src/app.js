@@ -1,13 +1,12 @@
 var View = require('view');
 var ajax = require('ajax');
 var stations = require('stations');
-var Config = require('Config');
+var Config = require('Config');    // This is a constructor
 
 // This data will come from the configuration
-var config = {
-    home: 'Swarthmore',
-    work: 'Suburban Station'
-};
+console.log('Creating Config() object');
+var config = new Config(configChanged);
+console.log('defaults: ', config.home, config.work, config.freq);
 
 // Set up the model/viewmodel
 var model = {
@@ -90,7 +89,7 @@ View.window.on('click', 'up', swapDest);
 View.window.on('click', 'down', swapDest);
 
 // Update every minute
-setInterval(function() { getNextToArrive(); }, 60000);
+setInterval(function() { getNextToArrive(); }, config.freq * 60000);
 
 // Geolocation processing
 (function () {
@@ -114,4 +113,8 @@ setInterval(function() { getNextToArrive(); }, 60000);
         });
 })();
 
-Config.init();    // set up the config page handlers
+function configChanged(config) {
+    model.startStation = config.home;
+    model.workStation = config.work;
+    getNextToArrive();
+}
