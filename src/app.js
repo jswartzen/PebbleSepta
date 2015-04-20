@@ -86,19 +86,29 @@ View.window.show();
 View.window.on('click', 'up', swapDest);
 View.window.on('click', 'down', swapDest);
 
-// Update every minute
-setInterval(function() { getNextToArrive(); }, config.freq * 60000);
+// Start train schedule update timer
+var scheduleTimer;
+function startTimer()
+{
+    if (scheduleTimer) {
+        clearInterval(scheduleTimer);
+    }
+    scheduleTimer = setInterval(function() { getNextToArrive(); }, config.freq * 60000);
+}
+startTimer();
 
 // Geolocation processing
 (function () {
     var watchId = navigator.geolocation.watchPosition(
         function (pos) {
-            var station = stations.closestStation(pos.coords.latitude, pos.coords.longitude);
-            setStartStation(station);
-            
-            if (station && pos.coords.accuracy <= 50) {
-                navigator.geolocation.clearWatch(watchId);
-            }
+            stations.closestStation(pos.coords.latitude, pos.coords.longitude, function (station) {
+                console.log("Got Station: " + station);
+                setStartStation(station);
+                
+                if (station && pos.coords.accuracy <= 60) {
+                    navigator.geolocation.clearWatch(watchId);
+                }
+            });
         }, 
         function (err) {
             console.log('GPS error: ' + err.message + '(' + err.code + ')');
@@ -114,4 +124,5 @@ function configChanged(config) {
     model.startStation = config.home;
     model.workStation = config.work;
     getNextToArrive();
+    startTimer();
 }
